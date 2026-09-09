@@ -28,7 +28,8 @@ class BinaryWaterfall:
                  flip_v=constants.DEFAULTS["flip_v"],
                  flip_h=constants.DEFAULTS["flip_h"],
                  alignment=constants.DEFAULTS["alignment"],
-                 playhead_visible=constants.DEFAULTS["playhead_visible"]
+                 playhead_visible=constants.DEFAULTS["playhead_visible"],
+                 frame_lock=constants.DEFAULTS["frame_lock"]
                  ):
         # Initialize class variables
         self.audio_length_ms = None
@@ -51,6 +52,7 @@ class BinaryWaterfall:
         self.flip_h = None
         self.alignment = None
         self.playhead_visible = None
+        self.frame_lock = None
 
         # Make the temp dir for the class instance
         self.temp_dir = tempfile.mkdtemp()
@@ -74,6 +76,8 @@ class BinaryWaterfall:
         self.set_alignment(alignment=alignment)
 
         self.set_playhead_visible(playhead_visible=playhead_visible)
+
+        self.set_frame_lock(frame_lock=frame_lock)
 
         self.set_audio_settings(
             num_channels=num_channels,
@@ -285,6 +289,9 @@ class BinaryWaterfall:
     def set_playhead_visible(self, playhead_visible):
         self.playhead_visible = playhead_visible
 
+    def set_frame_lock(self, frame_lock):
+        self.frame_lock = frame_lock
+
     def set_audio_settings(self,
                            num_channels,
                            sample_bytes,
@@ -374,6 +381,11 @@ class BinaryWaterfall:
 
         # Get the block index of the current audio location
         address_block_index = round(total_blocks * (ms / self.audio_length_ms))
+
+        # Frame lock: snap to a whole number of frames, so files that store video
+        # frames back-to-back never show a view straddling two of them
+        if self.frame_lock:
+            address_block_index = round(address_block_index / self.height) * self.height
 
         # Adjust index for other alignments
         if self.alignment == constants.AlignmentCode.START:

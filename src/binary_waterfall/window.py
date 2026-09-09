@@ -456,6 +456,7 @@ class MyQMainWindow(QMainWindow):
             flip_h=self.bw.flip_h,
             alignment=self.bw.alignment,
             playhead_visible=self.bw.playhead_visible,
+            frame_lock=self.bw.frame_lock,
             parent=self
         )
 
@@ -477,6 +478,9 @@ class MyQMainWindow(QMainWindow):
             )
             self.bw.set_playhead_visible(
                 playhead_visible=video_settings["playhead_visible"]
+            )
+            self.bw.set_frame_lock(
+                frame_lock=video_settings["frame_lock"]
             )
             self.player.refresh_dims()
             self.player.update_image()

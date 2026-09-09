@@ -1,47 +1,66 @@
-# <img src="src/binary_waterfall/resources/icon.png" height="20px" alt="Binary Waterfall"/> Binary Waterfall
-### A Raw Data Media Player
+# <img src="src/binary_waterfall/resources/icon.png" height="20px" alt="Binary Waterfall"/> Binary Waterfall — Frame Lock fork
+### A Raw Data Media Player, with an option that makes purpose-built video files play back cleanly
 
 <p align="center"><img src="docs/example.png" width="400px" alt="Running the program on mspaint.exe"/></p>
 
-<p align="center"><a href="https://www.youtube.com/watch?v=NFe0aGO9-TE">Inspired by this video.</a></p>
+This is a fork of [nimaid/binary-waterfall](https://github.com/nimaid/binary-waterfall). Everything the original does, it still does — the only change is a new **Frame Lock** checkbox in Video Settings, off by default.
+
+## What Frame Lock is for
+
+Binary Waterfall slides a window of `Height` rows down a file at the speed of the audio playhead. During live playback the position of that window comes from the audio backend, which reports the time with a few milliseconds of jitter. On ordinary files nobody notices. But if a file was built so that its bytes *are* video frames stored back to back, those few milliseconds put the window a few rows off the frame boundary, and the picture rolls vertically like a TV with a broken vertical hold.
+
+Frame Lock snaps the window to a whole number of `Height` rows, so the view always lands on a frame instead of straddling two. Audio is untouched and stays continuous; only the picture stops sliding.
+
+Leave it **off** for normal files — MP3s, executables, anything not built around a frame grid — where snapping just makes the waterfall move in jerky steps instead of flowing.
+
+## Making files that use it
+
+Frame Lock is only useful with files laid out as frames. Two tools that build them:
+
+- **Web converter** — drag a video in, get a file out, no install: [link](https://randomtypek.github.io/bwv_encode/)
+- **Corruptor** — a glitch tool that knows which byte is the picture and which three are the sound: [link](https://randomtypek.github.io/bwv_encode/corrupt.html)
+- **`bw_encode.py`** — command-line version, needs ffmpeg and numpy
+
+The general recipe: each pixel byte is the low byte of a 32-bit audio sample (colour format `wxxx`, or `rxxxgxxxbxxx` for RGB), the real audio lives in the top three bytes, and the sample rate is chosen so that exactly one frame's worth of rows scrolls past per 1/fps second.
 
 ## Downloads
-<table align="center" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse !important;">
-    <tr style="border: none !important;">
-        <td align="center" style="border: none !important;">
-            <a href="https://nimaid.itch.io/binary-waterfall">
-                <img src="docs/windows.png" width="150px" alt="Click here to download the program for Windows!"/>
-                <br />
-                <b>Windows</b>
-            </a>
-        </td>
-        <td align="center" style="border: none !important;">
-            <a href="https://pypi.org/project/binary-waterfall/">
-                <img src="docs/python.png" width="150px" alt="Click here to download the program for Python!"/>
-                <br />
-                <b>All Platforms</b>
-            </a>
-        </td>
-    </tr>
-</table>
+
+This fork has no prebuilt binaries. Run it from source:
+
+```
+pip install -e .
+python binary-waterfall.py
+```
+
+For the original program, with Windows builds and a PyPI package, go to [nimaid's repository](https://github.com/nimaid/binary-waterfall).
+
+### Python 3.13+
+
+Two upstream dependencies have drifted. This fork pins them in `pyproject.toml`, so a fresh install handles it:
+
+- `audioop` was removed from the standard library in Python 3.13, and pydub still needs it — supplied by `audioop-lts`
+- `moviepy` 2.x dropped the `moviepy.editor` namespace — pinned to `moviepy<2`
 
 ## Attribution
-If you use this program to make a video or other project, you must provide attribution. Attribution is required regardless of whether your project is for-profit or not. Please reproduce the following attribution statement in full in your video description or otherwise include it in the references for your project:
+
+Attribution is required for anything you make with this program, for-profit or not, and points at the original project. Reproduce this in your video description or project references:
+
 ```
 Made with the help of Binary Waterfall:
 https://github.com/nimaid/binary-waterfall
 ```
 
-## Keyboard Shortcuts
-- **Play / Pause:** `Spacebar`
-- **Back:** `Left Arrow`
-- **Forward:** `Right Arrow`
-- **Frame Back:** `<` (`,`)
-- **Frame Forward:** `>` (`.`)
-- **Restart:** `R`
-- **Volume Up:** `Up Arrow`
-- **Volume Down:** `Down Arrow`
-- **Mute / Unmute:** `M`
+## Keyboard shortcuts
 
-## Showcase Video
-[<img src="https://i.ytimg.com/vi/gZRWbv_aob0/maxresdefault.jpg" width="300px">](https://www.youtube.com/watch?v=gZRWbv_aob0 "Microsoft Paint Remix")
+| Action | Key |
+| --- | --- |
+| Play / Pause | `Spacebar` |
+| Back / Forward | `←` / `→` |
+| Frame back / forward | `,` / `.` |
+| Restart | `R` |
+| Volume up / down | `↑` / `↓` |
+| Mute | `M` |
+
+## License
+
+GPL-3.0, same as upstream. Original program by Ella Jameson (nimaid). This fork adds the Frame Lock option in `generators.py`, `dialogs.py`, `window.py` and `constants/defaults.py`; everything else is unmodified.

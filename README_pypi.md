@@ -1,9 +1,15 @@
-# <img src="https://github.com/nimaid/binary-waterfall/blob/main/src/binary_waterfall/resources/icon.png?raw=true" height="20px" alt="Binary Waterfall"/> Binary Waterfall
-### A Raw Data Media Player
+# <img src="https://github.com/nimaid/binary-waterfall/blob/main/src/binary_waterfall/resources/icon.png?raw=true" height="20px" alt="Binary Waterfall"/> Binary Waterfall — Frame Lock fork
+### A Raw Data Media Player, with an option that makes purpose-built video files play back cleanly
 
 <p align="center"><img src="https://github.com/nimaid/binary-waterfall/blob/main/docs/example.png?raw=true" width="400px" alt="Running the program on mspaint.exe"/></p>
 
-<p align="center"><a href="https://www.youtube.com/watch?v=NFe0aGO9-TE">Inspired by this video.</a></p>
+A fork of [nimaid/binary-waterfall](https://github.com/nimaid/binary-waterfall). Everything the original does, it still does — the only change is a new **Frame Lock** checkbox in Video Settings, off by default.
+
+## Frame Lock
+
+Binary Waterfall slides a window of `Height` rows down a file at the speed of the audio playhead. During live playback that position comes from the audio backend, which reports the time with a few milliseconds of jitter. On ordinary files nobody notices. But if a file was built so that its bytes *are* video frames stored back to back, those milliseconds put the window a few rows off the frame boundary and the picture rolls vertically.
+
+Frame Lock snaps the window to a whole number of `Height` rows, so the view always lands on a frame instead of straddling two. Audio is untouched. Leave it off for normal files, where snapping only makes the waterfall move in jerky steps.
 
 ## Command Line Usage
 After installing the module, run `binary-waterfall`.
@@ -26,5 +32,5 @@ https://github.com/nimaid/binary-waterfall
 - **Volume Down:** `Down Arrow`
 - **Mute / Unmute:** `M`
 
-## Showcase Video
-[<img src="https://i.ytimg.com/vi/gZRWbv_aob0/maxresdefault.jpg" width="300px">](https://www.youtube.com/watch?v=gZRWbv_aob0 "Microsoft Paint Remix")
+## License
+GPL-3.0, same as upstream. Original program by Ella Jameson (nimaid); this fork adds the Frame Lock option.

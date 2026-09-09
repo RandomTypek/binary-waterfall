@@ -28,14 +28,15 @@ dependencies = [
     "Pillow",
     "PyQt5",
     "pydub",
-    "moviepy",
-    "proglog"
+    "moviepy<2",
+    "proglog",
+    "audioop-lts; python_version >= '3.13'"
 ]
 
 [project.urls]
-homepage = "https://github.com/nimaid/binary-waterfall"
-repository = "https://github.com/nimaid/binary-waterfall"
-Issues = "https://github.com/nimaid/binary-waterfall/issues"
+homepage = "https://github.com/RandomTypek/binary-waterfall"
+repository = "https://github.com/RandomTypek/binary-waterfall"
+Issues = "https://github.com/RandomTypek/binary-waterfall/issues"
 
 [project.scripts]
 binary-waterfall = "binary_waterfall:run"

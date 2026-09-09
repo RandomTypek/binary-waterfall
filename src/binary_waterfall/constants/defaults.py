@@ -10,6 +10,7 @@ DEFAULTS = {
     "color_format_string": "bgrx",
     "alignment": enums.AlignmentCode.MIDDLE,
     "playhead_visible": True,
+    "frame_lock": False,
     "flip_v": True,
     "flip_h": False,
     "max_dim": 512,

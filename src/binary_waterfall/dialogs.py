@@ -147,6 +147,7 @@ class VideoSettings(QDialog):
                  flip_h,
                  alignment,
                  playhead_visible,
+                 frame_lock,
                  parent=None
                  ):
         super().__init__(parent=parent)
@@ -165,6 +166,7 @@ class VideoSettings(QDialog):
         self.flip_h = flip_h
         self.alignment = alignment
         self.playhead_visible = playhead_visible
+        self.frame_lock = frame_lock
 
         self.width_label = QLabel("Width:")
         self.width_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignRight)
@@ -216,6 +218,18 @@ class VideoSettings(QDialog):
         self.playhead_entry.setChecked(self.playhead_visible)
         self.playhead_entry.stateChanged.connect(self.playhead_entry_changed)
 
+        self.frame_lock_entry_label = QLabel("Frame Lock:")
+        self.frame_lock_entry_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignRight)
+
+        self.frame_lock_entry = QCheckBox("Snap to frames")
+        self.frame_lock_entry.setToolTip(
+            "Snap the view to whole frames of Height rows.\n"
+            "For files that store video frames back-to-back, this stops the picture\n"
+            "from rolling during live playback. Leave off for ordinary files."
+        )
+        self.frame_lock_entry.setChecked(self.frame_lock)
+        self.frame_lock_entry.stateChanged.connect(self.frame_lock_entry_changed)
+
         self.flip_v_entry_label = QLabel("Vertical:")
         self.flip_v_entry_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignRight)
 
@@ -246,11 +260,13 @@ class VideoSettings(QDialog):
         self.main_layout.addWidget(self.alignment_entry, 3, 1)
         self.main_layout.addWidget(self.playhead_entry_label, 4, 0)
         self.main_layout.addWidget(self.playhead_entry, 4, 1)
-        self.main_layout.addWidget(self.flip_v_entry_label, 5, 0)
-        self.main_layout.addWidget(self.flip_v_entry, 5, 1)
-        self.main_layout.addWidget(self.flip_h_entry_label, 6, 0)
-        self.main_layout.addWidget(self.flip_h_entry, 6, 1)
-        self.main_layout.addWidget(self.confirm_buttons, 7, 0, 1, 2)
+        self.main_layout.addWidget(self.frame_lock_entry_label, 5, 0)
+        self.main_layout.addWidget(self.frame_lock_entry, 5, 1)
+        self.main_layout.addWidget(self.flip_v_entry_label, 6, 0)
+        self.main_layout.addWidget(self.flip_v_entry, 6, 1)
+        self.main_layout.addWidget(self.flip_h_entry_label, 7, 0)
+        self.main_layout.addWidget(self.flip_h_entry, 7, 1)
+        self.main_layout.addWidget(self.confirm_buttons, 8, 0, 1, 2)
 
         self.setLayout(self.main_layout)
 
@@ -265,6 +281,7 @@ class VideoSettings(QDialog):
         result["flip_h"] = self.flip_h
         result["alignment"] = self.alignment
         result["playhead_visible"] = self.playhead_visible
+        result["frame_lock"] = self.frame_lock
 
         return result
 
@@ -295,6 +312,12 @@ class VideoSettings(QDialog):
             self.playhead_visible = False
         else:
             self.playhead_visible = True
+
+    def frame_lock_entry_changed(self, value):
+        if value == 0:
+            self.frame_lock = False
+        else:
+            self.frame_lock = True
 
     def flip_v_entry_changed(self, value):
         if value == 0:
